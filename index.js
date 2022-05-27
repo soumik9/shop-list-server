@@ -27,7 +27,55 @@ async function run() {
             res.send('Shop list server is ready.')
         })
 
-     
+        // api get all servicces
+        app.get('/services', async (req, res) => {
+            const query = req.query;
+            const category = req.query.category;
+            const area = req.query.area;
+            const status = req.query.status;
+            let convertStatus = true;
+
+            if(status === 'true'){ convertStatus = true }else{ convertStatus = false }
+
+
+            let filter = {};
+
+            if(category){
+                filter = {category: category};
+            }
+            if(area){
+                filter = {area: area};
+            }
+            if(status){
+                filter = {status: convertStatus};
+            }
+            if(category && area){
+                filter = {category: category, area: area};
+            }
+            if(category && status){
+                filter = {category: category, status: convertStatus};
+            }
+            if(area && status){
+                filter = {area: area, status: convertStatus};
+            }
+            
+            if(category && area && status){
+                filter = {category: category, area: area, status: convertStatus};
+            }
+ 
+
+            let services;
+
+            if(category || area || status){
+                services = await servicesCollection.find(filter).toArray();
+            }else{
+                services = await servicesCollection.find({}).toArray();
+            }
+
+            res.send(services);
+        })
+
+   
         
         } finally {
 
