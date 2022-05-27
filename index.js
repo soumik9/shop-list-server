@@ -75,7 +75,47 @@ async function run() {
             res.send(services);
         })
 
-   
+        // api get single servicces
+        app.get('/services/:shopId', async (req, res) => {
+            const id = req.params.shopId;
+            const query = {_id: ObjectId(id)}
+            const service = await servicesCollection.findOne(query);
+            res.send(service);
+        })
+
+        // add service
+        app.post('/services', async (req, res) => {
+            const service = req.body;
+            const result = await servicesCollection.insertOne(service);
+            return res.send(result);
+        })
+
+        // update service
+        app.put('/services/:shopId', async (req, res) => {
+            const id = req.params.shopId;
+            const service = req.body
+            console.log(service);
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updateDoc = {
+                $set: {
+                    // ...service
+                    name: service.name,
+                    area: service.area,
+                    category: service.category, 
+                    openingDate: service.openingDate, 
+                    ClosingDate: service.ClosingDate,
+                    status: service.status
+                }
+            }
+
+            const result = await servicesCollection.updateOne(filter, updateDoc, options);
+            console.log(result);
+            res.send(result);
+        })
+
+      
         
         } finally {
 
