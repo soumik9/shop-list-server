@@ -115,7 +115,19 @@ async function run() {
             res.send(result);
         })
 
-      
+        // delete service
+        app.delete('/services/:shopId', async (req, res) => {
+            const id = req.params.shopId;
+            const filter = {_id: ObjectId(id)}
+            const result = await servicesCollection.deleteOne(filter);
+            res.send(result);
+        })
+
+        // api get all categories
+        app.get('/categories', async (req, res) => {
+            const categories = await categoriesCollection.find({}).toArray();
+            res.send(categories);
+        })
         
         } finally {
 
